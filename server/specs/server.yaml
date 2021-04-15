@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: yagna-poc-classifier
+  contact:
+    name: Golem Apps & Cooperations Team
+    email: apps-team@golem.network
+  description: 
+      Proof-of-concept of long running tasks on Golem network which leverages chosen 
+      text classifiers.
+servers:
+  - url: 'http://localhost:3000/api'
+
+paths:
+  /classify:
+    post:
+      summary: Classifies posted text
+      operationId: post-classify
+      tags:
+        - classification
+      responses:
+        '200':
+          description: Responses retrieved from classifiers
+          content:
+            application/json:
+                schema:
+                    $ref: '#/components/schemas/TextClassification'
+                example:
+                    results:
+                        -
+                            classifier_id: 'distilbart-cnn-12-6'
+                            summary_text:
+                                The tower is 324 metres (1,063 ft) tall, about the same height as an 81-storey building . 
+                                It was the first structure to reach a height of 300 metres . It is now taller than the 
+                                Chrysler Building in New York City
+                        -
+                            classifier_id: 'bert-base-uncased-emotion'
+                            summary_list:
+                                -
+                                    label: 'love'
+                                    score: 0.005923508666455746
+                                -
+                                    label: 'joy'
+                                    score: 0.38369229435920715
+                                -
+                                    label: 'surprise'
+                                    score: 0.6015767455101013
+        '413':
+          description: Payload too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Server not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+      requestBody:
+        description: Entire payload is unstructured text (or blob) being classified
+        content:
+          text/plain:
+            example:
+                The tower is 324 metres (1,063 ft) tall, about the same height as an 81-storey building, 
+                and the tallest structure in Paris. Its base is square, measuring 125 metres (410 ft) on each side. 
+                During its construction, the Eiffel Tower surpassed the Washington Monument to become the tallest 
+                man-made structure in the world, a title it held for 41 years until the Chrysler Building in New York City 
+                was finished in 1930. It was the first structure to reach a height of 300 metres. Due to the addition 
+                of a broadcasting aerial at the top of the tower in 1957, it is now taller than the Chrysler Building 
+                by 5.2 metres (17 ft). Excluding transmitters, the Eiffel Tower is the second tallest free-standing 
+                structure in France after the Millau Viaduct.
+
+components:
+  schemas:
+    TextClassification:
+      type: object
+      required:
+        - results
+      properties:
+        results:
+            type: array
+            minItems: 1
+            items:
+                $ref: '#/components/schemas/TextClassificationResult'
+    TextClassificationResult:
+        type: object
+        required:
+          - classifier_id
+        properties:
+            classifier_id:
+                type: string
+            summary_text:
+                type: string
+                maxLength: 2048
+            summary_list:
+                type: array
+                items:
+                    type: object
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
