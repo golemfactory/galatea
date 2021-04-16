@@ -1,2 +1,4 @@
 provider/models/
 provider/output.txt
+
+*.deb
