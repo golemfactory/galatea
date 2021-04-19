@@ -11,7 +11,7 @@ def download(model: str, save_directory: str) -> None:
 if __name__ == '__main__':
     try:
         model, save_directory = sys.argv[1:]
-    except KeyError:
+    except ValueError:
         print(f"Usage: {sys.argv[0]} <model> <save_directory>")
         sys.exit(1)
 

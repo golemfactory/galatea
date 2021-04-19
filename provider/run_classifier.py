@@ -17,7 +17,7 @@ if __name__ == '__main__':
         model, input_path, output_path = sys.argv[1:]
         input_path = Path(input_path)
         output_path = Path(output_path)
-    except (KeyError, TypeError):
+    except (ValueError, TypeError):
         print(f"Usage: {sys.argv[0]} <model> <input> <output>")
         sys.exit(1)
 
