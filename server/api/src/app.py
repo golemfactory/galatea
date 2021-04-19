@@ -1,25 +1,24 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 
-def create_app():
-    """
-    Create a Flask application using the app factory pattern.
+import classifier
 
-    :return: Flask app
-    """
+def create_app():
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
 
     @app.route('/api')
     def index():
-        """
-        Backend API response
-
-        :return: Flask response
-        """
         return {
             "version": "0.0.1",
-        }
+    }
+
+    @app.route('/api/classify', methods=["POST"])
+    def classify():
+        text = request.form.get("text_file") or request.form.get("text")
+        print(text)
+
+        return classifier.classify_text(text)
 
 
     return app
