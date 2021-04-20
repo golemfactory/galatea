@@ -2,14 +2,16 @@
 
 all: build start
 
-.PHONY:  build start
+.PHONY: build start
 
 requirements.txt:
-	# We're assuming virtual env is sourced. This needs to be done whenever dependencies changed
 	pipenv lock --keep-outdated --requirements > src/requirements.txt
 
 build:
-	docker build -t ya-poc-api .
+	docker build \
+		--build-arg=COMMIT=$$(git rev-parse --short HEAD) \
+		--build-arg=BRANCH=$$(git branch --show-current) \
+		-t ya-poc-api .
 
 start:
 	# We assume that image is already built
