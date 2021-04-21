@@ -7,6 +7,28 @@ body {
   align-items: center;
 }
 
-header {
-  transform: translateY(-100px);
+form {
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.result {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.result div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result span {
+  margin-bottom: 15px;
 }
