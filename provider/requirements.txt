@@ -1,4 +1,0 @@
-click==7.1.2
-pyzmq==22.0.3
-torch==1.8.1
-transformers==4.5.1

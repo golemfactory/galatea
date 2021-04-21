@@ -10,8 +10,8 @@ if TYPE_CHECKING:
 
 
 @click.command()
-@click.argument('models_json', type=click.File())
-@click.argument('models_dir', type=click.Path(file_okay=False, writable=True))
+@click.argument('models_json', envvar='MODELS_JSON', type=click.File())
+@click.argument('models_dir', envvar='MODELS_DIR', type=click.Path(file_okay=False, writable=True))
 def download_models(models_json: 'TextIO', models_dir: str) -> None:
     models: Dict[str, Dict[str, Any]] = json.load(models_json)
     save_directory = Path(models_dir)
