@@ -1,6 +1,5 @@
 # Server API client of Yagna daemon
 
-**IMPORTANT:** `Pipenv` is used to keep dependencies in sync and to ensure reproducible builds.
-However to simplify Docker's image build, image is using `pip` tool. So every time dependecies 
-are changed we need to refresh the requirements.txt
+To run the api server inside a container simply run `make` in the terminal in this directory.
 
+To remove docker artifacts run `make clean`

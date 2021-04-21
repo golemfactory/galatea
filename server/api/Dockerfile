@@ -13,7 +13,7 @@ WORKDIR $INSTALL_PATH
 ENV BRANCH=${BRANCH}
 ENV COMMIT=${COMMIT}
 
-COPY ./src .
+COPY requirements.txt src ./
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 CMD gunicorn -b 0.0.0.0:8001 --access-logfile - "app:create_app()"

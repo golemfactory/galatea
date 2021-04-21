@@ -4,9 +4,6 @@ all: build start
 
 .PHONY: build start
 
-requirements.txt:
-	pipenv lock --keep-outdated --requirements > src/requirements.txt
-
 build:
 	docker build \
 		--build-arg=COMMIT=$$(git rev-parse --short HEAD) \
@@ -18,5 +15,4 @@ start:
 	docker run --rm -it -p 8001:8001 --name poc-api ya-poc-api
 
 clean:
-	rm requirements.txt || true
 	docker rmi ya-poc-api || true
