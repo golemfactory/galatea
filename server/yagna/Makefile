@@ -8,7 +8,9 @@ all: clean build_image start_yagna
 $(FILE):
 	curl -L -o $(FILE) $(RELEASE_URL)/$(YAGNA_RELEASE)/$(FILE)
 
-.PHONY: clean build_image start_yagna 
+.PHONY: clean download build_image start_yagna 
+download: $(FILE)
+
 build_image: $(FILE)
 	docker build -t yagna:$(YAGNA_RELEASE) -f yagna.Dockerfile .
 

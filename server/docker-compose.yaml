@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+    yagna:
+        build:
+            dockerfile: Dockerfile
+            context: ./yagna
+        image: yagna-service
+        volumes:
+            - ./yagna_data:/root/.local/share/yagna

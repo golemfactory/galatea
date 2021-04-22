@@ -13,6 +13,9 @@ sleep 5
 /usr/bin/yagna payment fund --driver zksync
 /usr/bin/yagna payment init --sender --driver zksync
 
+# having key generation a last step allows api service to wait until yagna is ready
+/usr/bin/yagna app-key create requestor  > /root/.local/share/yagna/app_key
+
 # now we bring the primary process back into the foreground
 # and leave it there
 fg %1
