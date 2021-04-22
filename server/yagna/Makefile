@@ -12,14 +12,14 @@ $(FILE):
 download: $(FILE)
 
 build_image: $(FILE)
-	docker build -t yagna:$(YAGNA_RELEASE) -f yagna.Dockerfile .
+	docker build --build-arg=DISTFILE=$(FILE) -t yagna-service .
 
 clean:
 	rm *.deb || true
 	docker container rm -f janka
-	docker rmi yagna:$(YAGNA_RELEASE) || true
+	docker rmi yagna-service || true
 
 start_yagna:
 	# assumes the image is already built
 	# temporary solution (we want docker-compose)
-	docker run -d --name janka yagna:$(YAGNA_RELEASE)
+	docker run -d --name janka yagna-service

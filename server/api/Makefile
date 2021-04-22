@@ -8,11 +8,11 @@ build:
 	docker build \
 		--build-arg=COMMIT=$$(git rev-parse --short HEAD) \
 		--build-arg=BRANCH=$$(git branch --show-current) \
-		-t ya-poc-api .
+		-t yagna-api .
 
 start:
 	# We assume that image is already built
-	docker run --rm -it -p 8001:8001 --name poc-api ya-poc-api
+	docker run --rm -it -p 8001:8001 --name poc-api yagna-api
 
 clean:
-	docker rmi ya-poc-api || true
+	docker rmi yagna-api || true

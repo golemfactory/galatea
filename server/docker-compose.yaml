@@ -5,6 +5,25 @@ services:
         build:
             dockerfile: Dockerfile
             context: ./yagna
+            args:
+                - DISTFILE
         image: yagna-service
         volumes:
             - ./yagna_data:/root/.local/share/yagna
+
+    api:
+        build:
+            dockerfile: Dockerfile
+            context: ./api
+            args:
+                - COMMIT
+                - BRANCH
+        image: yagna-api
+        environment:
+            - PYTHONUNBUFFERED=1
+        ports:
+            - 8001:8001
+        volumes:
+            - ./yagna_data:/app/yagna
+        depends_on:
+            - yagna

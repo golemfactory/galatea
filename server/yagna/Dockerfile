@@ -1,5 +1,8 @@
 FROM debian:bullseye-slim
 
+ARG DISTFILE=""
+LABEL dist_file=${DISTFILE}
+
 COPY *.deb init.sh ./
 
 RUN chmod +x /usr/bin/* \
