@@ -5,6 +5,7 @@ import classifier
 import os
 from pathlib import Path
 from time import sleep, time
+from utils import parse_yagna_key
 
 # Wait for the `app_key` file is available in `yagna` directory. This file is created by yagna service init script.
 MAX_WAIT_TIME_SECONDS = 60
@@ -16,9 +17,8 @@ while not path.exists():
     sleep(1)
     assert time() - wait_start < MAX_WAIT_TIME_SECONDS, "Yagna service was not ready in the time period."
 
-YAGNA_APP_KEY = path.read_text().strip()
+YAGNA_APP_KEY = parse_yagna_key(path.read_text())
 print(f"{YAGNA_APP_KEY=}")
-assert len(YAGNA_APP_KEY) == 32, "Unable to read Yagna app key."
 
 
 def create_app():

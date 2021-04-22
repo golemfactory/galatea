@@ -1,6 +1,8 @@
 provider/models/
 provider/output.txt
 
+server/yagna_data/
+
 *.deb
 .venv
 __pycache__/
