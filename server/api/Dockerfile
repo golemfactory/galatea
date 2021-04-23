@@ -16,4 +16,4 @@ ENV COMMIT=${COMMIT}
 COPY requirements.txt src ./
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-CMD FLASK_APP="app:create_app()" flask run --host=0.0.0.0
+CMD QUART_ENV=development QUART_APP="app:create_app()" quart run --host=0.0.0.0
