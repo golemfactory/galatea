@@ -13,7 +13,7 @@ WORKDIR $INSTALL_PATH
 ENV BRANCH=${BRANCH}
 ENV COMMIT=${COMMIT}
 
-COPY init.sh requirements.txt src ./
-RUN chmod +x init.sh && pip install --upgrade pip && pip install -r requirements.txt
+COPY requirements.txt src ./
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-ENTRYPOINT ./init.sh
+CMD QUART_ENV=development QUART_APP="app:create_app()" quart run --host=0.0.0.0

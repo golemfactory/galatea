@@ -12,7 +12,7 @@ build:
 
 start:
 	# We assume that image is already built
-	docker run --rm -it -p 5000:5000 --name poc-api -e NO_YAGNA=1 yagna-api
+	docker run --rm -it -p 5000:5000 --name poc-api yagna-api
 
 clean:
 	docker rmi yagna-api || true
