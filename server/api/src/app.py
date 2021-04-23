@@ -3,26 +3,20 @@ from flask_cors import CORS
 
 import classifier
 import os
-from pathlib import Path
-from time import sleep, time
-from utils import parse_yagna_key
 
-# Wait for the `app_key` file is available in `yagna` directory. This file is created by yagna service init script.
-MAX_WAIT_TIME_SECONDS = 60
-wait_start = time()
-path = Path("./yagna/app_key")
+from utils import get_yagna_app_key
 
-print(f"Waiting for Yagna service ready... (allowing {MAX_WAIT_TIME_SECONDS} secs)")
-while not path.exists():
-    sleep(1)
-    assert time() - wait_start < MAX_WAIT_TIME_SECONDS, "Yagna service was not ready in the time period."
 
-YAGNA_APP_KEY = parse_yagna_key(path.read_text())
-print(f"{YAGNA_APP_KEY=}")
+YAGNA_ACCOUNT, YAGNA_APP_KEY = "0x000000000000000000000000000000000000dEaD", "appkey_not_obtained"
+if not os.getenv("NO_YAGNA"):
+    # Wait for the `app_key` file is available in `yagna` directory. This file is created by yagna service init script.
+    MAX_WAIT_TIME_SECONDS = 60
+    PATH = "./yagna/app_key"
+    YAGNA_ACCOUNT, YAGNA_APP_KEY = get_yagna_app_key(PATH, MAX_WAIT_TIME_SECONDS)
 
 
 def create_app():
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__)
     CORS(app)
 
     @app.route('/api')

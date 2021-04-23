@@ -31,7 +31,7 @@ services:
             - PYTHONUNBUFFERED=1
             - YAGNA_URL=http://yagna:6000/
         ports:
-            - 8001:8001
+            - 5000:5000
         volumes:
             - ./yagna_data:/app/yagna
         depends_on:
