@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const App = () => {
   const [text, setText] = useState('');
@@ -11,7 +11,10 @@ const App = () => {
 
   const [result, setResult] = useState(undefined);
 
-  const handleReset = () => setResult(undefined);
+  const handleReset = () => {
+    setText('');
+    setResult(undefined);
+  };
 
   const handleFetch = (e) => {
     e.preventDefault();
@@ -25,24 +28,96 @@ const App = () => {
       .catch((error) => console.log(error));
   };
 
-  return result ? (
-    <div className="result">
-      <div>
-        <span>Response is:</span>
-        {result.map((result) => result.summary_text)}
-      </div>
-      <button type="button" onClick={handleReset}>
-        Reset
-      </button>
-    </div>
-  ) : (
-    <form onSubmit={handleFetch}>
-      <label htmlFor="text">What do you want to send?</label>
-      <div>
-        <input name="text" id="text" placeholder="Type something" value={text} onChange={handleChange} />
-        <button>Submit</button>
-      </div>
-    </form>
+  const handleMouseDown = useCallback((e) => {
+    if (e.metaKey) {
+      setText(e.target.innerText);
+    }
+    if (e.metaKey && e.shiftKey) {
+      setText('');
+    }
+  }, []);
+
+  const handleMouseOver = useCallback((e) => {
+    if (e.metaKey && e.target.innerText) {
+      e.target.className += ' border';
+    }
+  }, []);
+
+  const handleMouseOut = useCallback((e) => {
+    e.target.classList.remove('border');
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
+
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
+    };
+  }, [handleMouseDown, handleMouseOver, handleMouseOut]);
+
+  return (
+    <>
+      {result ? (
+        <div className="result">
+          <div>
+            <span>Response is:</span>
+            {result.map((result) => result.summary_text)}
+          </div>
+          <button type="button" onClick={handleReset}>
+            Reset
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={handleFetch}>
+          <label htmlFor="text">What do you want to send?</label>
+          <textarea
+            name="text"
+            id="text"
+            placeholder="Type something or mark some text below"
+            value={text}
+            onChange={handleChange}
+          />
+          <button>Submit</button>
+        </form>
+      )}
+      {!result && (
+        <div className="mock">
+          <div className="featured-news">
+            <div className="section-title">
+              <div className="text-block-4">00 /</div>
+              <div className="text-block-3">Featured News</div>
+            </div>
+            <div className="container-3 w-container">
+              <div className="section-content">
+                <div className="w-layout-grid grid">
+                  <div className="news-date">
+                    <div className="text-block-2">15.04.2021</div>
+                    <div className="news-title">
+                      <strong className="bold-text">Golem Beta 1 Patch Release - v0.6.4</strong>
+                    </div>
+                    <div className="paragraph margin-bottom">
+                      We’ve been working on another minor update (v0.6.4) to improve stability and some of the issues
+                      that the Golem community has reported.
+                    </div>
+                  </div>
+                  <img
+                    src="https://assets-global.website-files.com/60005e3965a10f31d245af87/600706b49f261b3510ad7d78_Golem_arrow_right.svg"
+                    loading="lazy"
+                    width="150"
+                    id="w-node-_2b6c84de-8907-198d-f814-cca626aabfd8-b9e15d58"
+                    alt=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

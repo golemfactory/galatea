@@ -8,11 +8,17 @@ body {
 }
 
 form {
-  height: 50px;
+  height: 280px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+textarea {
+  width: 50%;
+  height: 200px;
+  margin: 10px 0;
 }
 
 .result {
@@ -31,4 +37,23 @@ form {
 
 .result span {
   margin-bottom: 15px;
+}
+
+.text {
+  width: 50%;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+}
+
+.mock {
+  width: 50%;
+  height: 200px;
+  margin: 20px auto;
+}
+
+.border {
+  outline: 1px solid dodgerblue;
+  outline-offset: 1px;
 }
