@@ -6,8 +6,8 @@ import os
 from utils import parse_yagna_key
 from time import time
 
-async def is_yagna_available(app):
-    global YAGNA_ACCOUNT, YAGNA_APP_KEY
+
+async def is_yagna_available(yagna_app):
     # Wait for the `app_key` file is available in `yagna` directory. This file is created by yagna service init script.
     MAX_WAIT_TIME_SECONDS = 60
     PATH = "./yagna/app_key"
@@ -20,19 +20,24 @@ async def is_yagna_available(app):
         print("Checking for app_Key file...")
         try:
             async with aiofiles.open(PATH, mode="r") as f:
-                YAGNA_ACCOUNT, YAGNA_APP_KEY = parse_yagna_key(await f.read())
-                app.yagna_available = True
+                account, appkey = parse_yagna_key(await f.read())
+                yagna_app["account"] = account
+                yagna_app["appkey"] = appkey
+
                 break
         except FileNotFoundError:
-            app.yagna_available = False
+            pass
 
 
-async def is_yagna_ready(app):
-    # Alright, this will serve just as a demo that API is able to connect to yagna service
-    # This code will be reorganized latter... most likely with a help of yapapi SDK
+async def is_yagna_ready(yagna_app):
+    assert yagna_app and yagna_app["appkey"], "Yagna's appkey hasn't been read yet!"
+
+    # Before we switch to YaPAPI let's first check if Yagna service responds tp REST requests
     async with aiohttp.ClientSession() as session:
+
         payment_url = os.environ["YAGNA_URL"] + "payment-api/v1/requestorAccounts"
-        auth_header = {"Authorization": f"Bearer {YAGNA_APP_KEY}"}
+        yagna_appkey = yagna_app["appkey"]
+        auth_header = {"Authorization": f"Bearer {yagna_appkey}"}
 
         while True:
             async with session.get(payment_url, headers=auth_header) as response:
@@ -42,12 +47,13 @@ async def is_yagna_ready(app):
                 await asyncio.sleep(3)
 
     requestor, *_ = response
-    app.yagna_ready = requestor['address'] == YAGNA_ACCOUNT
+    yagna_app["ready"] = requestor['address'] == yagna_app["account"]
 
 
-async def delayed_init(app):
+async def delayed_init(yagna_app):
     try:
-        await is_yagna_available(app)
-        await is_yagna_ready(app)
+        await is_yagna_available(yagna_app)
+        await is_yagna_ready(yagna_app)
+        # TODO: service loop...
     except Exception as ex:
         print("Unable to connect with Yagna service" + str(ex))
