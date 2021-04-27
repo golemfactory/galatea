@@ -28,6 +28,14 @@ const App = () => {
       .catch((error) => console.log(error));
   };
 
+  const handleCopy = useCallback((e) => {
+    const selection = document.getSelection();
+
+    setText(selection.toString());
+
+    e.preventDefault();
+  }, []);
+
   const handleMouseDown = useCallback((e) => {
     if (e.metaKey) {
       setText(e.target.innerText);
@@ -48,16 +56,18 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    document.addEventListener('copy', handleCopy);
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
 
     return () => {
+      document.removeEventListener('copy', handleCopy);
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseout', handleMouseOut);
     };
-  }, [handleMouseDown, handleMouseOver, handleMouseOut]);
+  }, [handleCopy, handleMouseDown, handleMouseOver, handleMouseOut]);
 
   return (
     <>
