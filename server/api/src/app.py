@@ -30,7 +30,13 @@ def create_app():
         text = form.get("text_file") or form.get("text")
         print(text)
 
-        return classifier.classify_text(text)
+        text_queue = app.yagna["tasks"]
+        fut = asyncio.get_running_loop().create_future()
+        text_queue.put_nowait((text, fut))
+
+        await fut
+        # TODO: Future can be cancelled...
+        return fut.result()
 
     @app.before_serving
     async def init_wait_yagna():
@@ -38,7 +44,7 @@ def create_app():
             "account": None,
             "appkey": None,
             "ready": False,
-            "tasks": "TODO: <async Queue>",
+            "tasks": asyncio.Queue()
         }
 
         asyncio.ensure_future(delayed_init(app.yagna))

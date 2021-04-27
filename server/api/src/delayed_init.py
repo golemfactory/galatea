@@ -4,6 +4,7 @@ import aiohttp
 import os
 
 from utils import parse_yagna_key
+from classifier import service_start
 from time import time
 
 
@@ -54,6 +55,9 @@ async def delayed_init(yagna_app):
     try:
         await is_yagna_available(yagna_app)
         await is_yagna_ready(yagna_app)
-        # TODO: service loop...
+
+        # Start Yagna's service loop
+        await service_start(yagna_app)
+
     except Exception as ex:
         print("Unable to connect with Yagna service" + str(ex))

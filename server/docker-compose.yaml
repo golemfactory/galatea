@@ -30,6 +30,9 @@ services:
         environment:
             - PYTHONUNBUFFERED=1
             - YAGNA_URL=http://yagna:6000/
+            - YAPAPI_SUBNET_TAG=
+            - YAPAPI_DRIVER=
+            - YAPAPI_NETWORK=
         ports:
             - 5000:5000
         volumes:
