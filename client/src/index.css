@@ -35,6 +35,19 @@ textarea {
   align-items: center;
 }
 
+.list {
+  display: flex;
+  margin-top: 20px;
+}
+
+.list:last-of-type {
+  margin-bottom: 20px;
+}
+
+.result .list span {
+  margin: 5px;
+}
+
 .result span {
   margin-bottom: 15px;
 }

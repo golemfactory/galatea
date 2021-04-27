@@ -65,7 +65,14 @@ const App = () => {
         <div className="result">
           <div>
             <span>Response is:</span>
-            {result.map((result) => result.summary_text)}
+            {result && result[0].summary_text}
+            {result &&
+              result[1].summary_list.map(({ label, score }) => (
+                <div className="list">
+                  <span>{label}:</span>
+                  <span>{score}</span>
+                </div>
+              ))}
           </div>
           <button type="button" onClick={handleReset}>
             Reset
