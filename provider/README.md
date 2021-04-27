@@ -63,14 +63,14 @@ $ make
 ...
 $ make push
 ...
-success. hash link 51a068470e1f7377ab7a31f179682f60b64a2b506973965a55b766c8
+success. hash link c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437
 ```
 
 ---
 
 ## Use image in Golem application
 
-Image hash: `51a068470e1f7377ab7a31f179682f60b64a2b506973965a55b766c8`
+Image hash: `c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437`
 
 1. Send input file to `/work/<input_file>`
 

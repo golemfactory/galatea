@@ -1,13 +1,13 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-all: venv docker yagna-service-poc-provider.gvmi
+all: virtualenv docker yagna-service-poc-provider.gvmi
 
 .venv/bin/activate:
 	python3 -m venv .venv
 	./.venv/bin/pip install --upgrade pip
 	./.venv/bin/pip install gvmkit-build
 
-venv: .venv/bin/activate
+virtualenv: .venv/bin/activate
 
 docker: Dockerfile classifier
 	docker build -t yagna-service-poc-provider -f Dockerfile classifier
@@ -31,5 +31,6 @@ clean:
 	docker image rm yagna-service-poc-provider || true
 	rm -f yagna-service-poc-provider.gvmi
 	rm -f test/test_output.txt
+	rm -rf .venv
 
-.PHONY: all venv docker push test clean
+.PHONY: all virtualenv docker push test clean

@@ -9,7 +9,6 @@ ENV MODELS_JSON $APP_DIR/models.json
 VOLUME $WORK_DIR
 
 # Install dependencies
-RUN mkdir -p $APP_DIR
 WORKDIR $APP_DIR
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
@@ -21,5 +20,4 @@ RUN python download_models.py && rm -rf /root/.cache/huggingface
 
 # Set up classifier server
 COPY classifier.py .
-ENTRYPOINT ["python", "classifier.py"]
-CMD ["run"]
+ENTRYPOINT ["python", "classifier.py", "run"]
