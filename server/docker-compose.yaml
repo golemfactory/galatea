@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+    yagna:
+        build:
+            dockerfile: Dockerfile
+            context: ./yagna
+            args:
+                - DISTFILE
+        image: yagna-service
+        environment:
+            - YAGNA_BUS_PORT=6010
+            - YAGNA_HTTP_PORT=6000
+            - GSB_URL=tcp://0.0.0.0:6010
+            - YAGNA_API_URL=http://0.0.0.0:6000
+        ports:
+            - 6000:6000
+            - 6010:6010
+        volumes:
+            - ./yagna_data:/root/.local/share/yagna
+
+    api:
+        build:
+            dockerfile: Dockerfile
+            context: ./api
+            args:
+                - COMMIT
+                - BRANCH
+        image: yagna-api
+        environment:
+            - PYTHONUNBUFFERED=1
+            - YAGNA_URL=http://yagna:6000/
+        ports:
+            - 5000:5000
+        volumes:
+            - ./yagna_data:/app/yagna
+        depends_on:
+            - yagna
