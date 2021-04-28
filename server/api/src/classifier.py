@@ -7,10 +7,11 @@ import aiofiles
 import random
 import string
 import os
-from typing import Dict
+from itertools import count
 
 from yapapi import (
     Executor,
+    Task,
     __version__ as yapapi_version,
     WorkContext,
 )
@@ -19,7 +20,7 @@ from yapapi.log import enable_default_logger, log_summary, log_event_repr  # noq
 from yapapi.package import vm
 
 package = await vm.repo(
-    image_hash="51a068470e1f7377ab7a31f179682f60b64a2b506973965a55b766c8",
+    image_hash="c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437",
     min_mem_gib=0.5,
     min_storage_gib=4.0,
 )
@@ -30,35 +31,33 @@ async def service_start(yagna_app):
     assert yagna_app and yagna_app["appkey"], "Classificator cannot be started, Yagna's APP_KEY is missing."
     os.environ["YAGNA_APPKEY"] = yagna_app["appkey"]
 
-    async def task_generator(timeout_seconds=30):
-        # Wait on queue until timeout to make provider busy
-        text_queue = yagna_app["tasks"]
-
-        # TODO: Implement timeout waiting on queue to avoid agreement termination on provider side
-        while True:
-            yield text_queue.get()
-            text_queue.task_done()
-
     async def handle_requests(ctx: WorkContext, tasks):
         """
         Initializes classifiers and yields texts as tasks
         """
+        PYTHON = "/usr/lib/python"
         CLASSIFIER_SCRIPT = "/classifier/classifier.py"
+        QUEUE_GET_TIMEOUT_SECONDS = 30
 
-        ctx.run(f"python {CLASSIFIER_SCRIPT}", "run")
+        # Wait on queue until timeout to make provider busy
+        text_queue = yagna_app["tasks"]
+
+        ctx.run(f"{PYTHON} {CLASSIFIER_SCRIPT}", "run")
 
         yield ctx.commit()
 
         try:
-            async for task in tasks:
+            while True:
                 test_filename = (
-                    "".join(random.choice(string.ascii_letters) for _ in range(10)) + ".txt"
+                        "".join(random.choice(string.ascii_letters) for _ in range(10)) + ".txt"
                 )
 
-                text, fut = task.data
+                text, fut = asyncio.wait_for(text_queue.get(), QUEUE_GET_TIMEOUT_SECONDS)
+                counter = task.data
+
                 ctx.send_bytes(f"/work/{test_filename}.in", text.encode())
                 ctx.run(
-                    f"python {CLASSIFIER_SCRIPT} submit /work/{test_filename}.in /work/{test_filename}.out"
+                    f"{PYTHON} {CLASSIFIER_SCRIPT} submit /work/{test_filename}.in /work/{test_filename}.out"
                 )
 
                 yield ctx.commit()
@@ -69,11 +68,15 @@ async def service_start(yagna_app):
                 async with aiofiles.open(f"/tmp/{test_filename}", mode="r") as f:
                     fut.set_result(await f.read())
 
+                text_queue.task_done()
                 task.accept_result()
 
         except asyncio.CancelledError:
             # let's ignore errors and pretend nothing has happened
             pass
+        except asyncio.TimeoutError:
+            # let provider know that we need its resources
+            ctx.commit()
 
     timeout = timedelta(minutes=29)
 
@@ -81,14 +84,14 @@ async def service_start(yagna_app):
     # See the documentation of the `yapapi.log` module on how to set
     # the level of detail and format of the logged information.
     async with Executor(
-        package=package,
-        max_workers=1,
-        budget=1.0,
-        timeout=timeout,
-        subnet_tag=os.getenv("YAPAPI_SUBNET_TAG"),
-        driver=os.getenv("YAPAPI_DRIVER"),
-        network=os.getenv("YAPAPI_NETWORK"),
-        event_consumer=log_summary(log_event_repr),
+            package=package,
+            max_workers=1,
+            budget=1.0,
+            timeout=timeout,
+            subnet_tag=os.getenv("YAPAPI_SUBNET_TAG"),
+            driver=os.getenv("YAPAPI_DRIVER"),
+            network=os.getenv("YAPAPI_NETWORK"),
+            event_consumer=log_summary(log_event_repr),
     ) as executor:
 
         print(
@@ -100,7 +103,7 @@ async def service_start(yagna_app):
 
         start_time = datetime.now()
 
-        async for task in executor.submit(handle_requests, task_generator()):
+        async for task in executor.submit(handle_requests, (Task(data=n) for n in count(1))):
             print(
                 f"Script executed: {task}, result: {task.result}, time: {task.running_time}"
             )

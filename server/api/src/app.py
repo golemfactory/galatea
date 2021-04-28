@@ -2,7 +2,6 @@ from quart import Quart, request
 from quart_cors import cors
 
 import asyncio
-import classifier
 import os
 
 from delayed_init import delayed_init
