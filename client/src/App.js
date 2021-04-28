@@ -36,38 +36,13 @@ const App = () => {
     e.preventDefault();
   }, []);
 
-  const handleMouseDown = useCallback((e) => {
-    if (e.metaKey) {
-      setText(e.target.innerText);
-    }
-    if (e.metaKey && e.shiftKey) {
-      setText('');
-    }
-  }, []);
-
-  const handleMouseOver = useCallback((e) => {
-    if (e.metaKey && e.target.innerText) {
-      e.target.className += ' border';
-    }
-  }, []);
-
-  const handleMouseOut = useCallback((e) => {
-    e.target.classList.remove('border');
-  }, []);
-
   useEffect(() => {
     document.addEventListener('copy', handleCopy);
-    document.addEventListener('mousedown', handleMouseDown);
-    document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseout', handleMouseOut);
 
     return () => {
       document.removeEventListener('copy', handleCopy);
-      document.removeEventListener('mousedown', handleMouseDown);
-      document.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseout', handleMouseOut);
     };
-  }, [handleCopy, handleMouseDown, handleMouseOver, handleMouseOut]);
+  }, [handleCopy]);
 
   return (
     <>
