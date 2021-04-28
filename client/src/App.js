@@ -19,7 +19,7 @@ const App = () => {
   const handleFetch = (e) => {
     e.preventDefault();
 
-    fetch('http://0.0.0.0:5000/api/classify', {
+    fetch('api/classify', {
       method: 'post',
       body: new URLSearchParams(`text=${text}`),
     })
