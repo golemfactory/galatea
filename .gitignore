@@ -7,3 +7,20 @@ server/yagna_data/
 *.gvmi
 .venv
 __pycache__/
+
+# client dependencies
+client/yarn.lock
+client/node_modules
+client/.pnp
+.pnp.js
+
+# client production build
+client/build
+
+# misc
+.DS_Store
+.env.*
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
