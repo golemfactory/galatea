@@ -8,6 +8,7 @@ body {
 }
 
 form {
+  width: 560px;
   height: 280px;
   display: flex;
   flex-direction: column;
@@ -58,15 +59,4 @@ textarea {
   display: flex;
   flex-direction: column;
   margin: 20px auto;
-}
-
-.mock {
-  width: 50%;
-  height: 200px;
-  margin: 20px auto;
-}
-
-.border {
-  outline: 1px solid dodgerblue;
-  outline-offset: 1px;
 }
