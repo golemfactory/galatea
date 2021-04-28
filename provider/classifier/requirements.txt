@@ -1,0 +1,5 @@
+click==7.1.2
+pyzmq==22.0.3
+-f https://download.pytorch.org/whl/torch_stable.html
+torch==1.8.1+cpu
+transformers==4.5.1

@@ -1,0 +1,14 @@
+{
+  "emotion": {
+    "task": "sentiment-analysis",
+    "ref": "nateraw/bert-base-uncased-emotion",
+    "pipeline_params": {
+      "return_all_scores": true
+    }
+  },
+  "summary": {
+    "task": "summarization",
+    "ref": "sshleifer/distilbart-cnn-12-6",
+    "pipeline_params": {}
+  }
+}

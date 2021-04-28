@@ -1,6 +1,7 @@
-provider/models/
-provider/output.txt
+provider/classifier/models/
+provider/classifier/output.txt
 
 *.deb
+*.gvmi
 .venv
 __pycache__/
