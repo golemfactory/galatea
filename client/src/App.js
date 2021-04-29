@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 const App = () => {
+  const url = process.env.REACT_APP_API;
+
   const [text, setText] = useState('');
 
   const handleChange = (e) => {
@@ -19,7 +21,7 @@ const App = () => {
   const handleFetch = (e) => {
     e.preventDefault();
 
-    fetch('api/classify', {
+    fetch(`${url}/api/classify`, {
       method: 'post',
       body: new URLSearchParams(`text=${text}`),
     })
