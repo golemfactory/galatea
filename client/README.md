@@ -8,7 +8,9 @@
 | yarn | 1.22.4  |
 | npm  | 6.14.9  |
 
-Note: default package manager for the project is `yarn` but you can use `npm` as well
+Note: default package manager for the project is `yarn` but you can use `npm` as well.
+
+However, to build an extension `yarn` is required.
 
 ## DIY
 
@@ -38,3 +40,11 @@ npm start or yarn start
 ```
 localhost:3000
 ```
+
+5. For extension
+
+```
+yarn build:extension
+```
+
+Then, add `client/build` folder to your Chrome extensions.
