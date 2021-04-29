@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { StyledForm, StyledResult } from './styles';
 
 const App = () => {
   const url = process.env.REACT_APP_API;
@@ -47,13 +48,13 @@ const App = () => {
   }, [handleCopy]);
 
   return result ? (
-    <div className="result">
+    <StyledResult>
       <div>
         <span>Response is:</span>
         {result && result[0].summary_text}
         {result &&
           result[1].summary_list.map(({ label, score }) => (
-            <div className="list">
+            <div>
               <span>{label}:</span>
               <span>{score}</span>
             </div>
@@ -62,9 +63,9 @@ const App = () => {
       <button type="button" onClick={handleReset}>
         Reset
       </button>
-    </div>
+    </StyledResult>
   ) : (
-    <form onSubmit={handleFetch}>
+    <StyledForm onSubmit={handleFetch}>
       <label htmlFor="text">What do you want to send?</label>
       <textarea
         name="text"
@@ -74,7 +75,7 @@ const App = () => {
         onChange={handleChange}
       />
       <button>Submit</button>
-    </form>
+    </StyledForm>
   );
 };
 
