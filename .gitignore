@@ -1,5 +1,7 @@
 provider/classifier/models/
 provider/classifier/output.txt
+provider/test/test.log
+provider/test/test_output.json
 
 server/yagna_data/
 

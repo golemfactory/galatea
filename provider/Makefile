@@ -22,7 +22,7 @@ test: docker
 	docker container rm -f yagna-service-poc-provider || true
 	docker run -d --rm --volume $(ROOT_DIR)/test:/work --name yagna-service-poc-provider yagna-service-poc-provider
 	docker exec yagna-service-poc-provider python classifier.py submit /work/the_queen_input.txt /work/test_output.txt
-	diff test/test_output.txt test/the_queen_output.txt && echo "Test OK"
+	diff test/test_output.txt test/the_queen_output.json && echo "Test OK"
 	rm  -f test/test_output.txt
 	docker stop yagna-service-poc-provider || true
 

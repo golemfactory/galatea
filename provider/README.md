@@ -3,8 +3,8 @@
 This is the provider part of the application. It includes a Python application `classfier` that runs sentiment analysis and summary generation over provided text. Build files are provided for creating Golem VM image. 
 
 Models used:
-* (bert-base-uncased-emotion)[https://huggingface.co/nateraw/bert-base-uncased-emotion]
-* (distilbart-cnn-12-6)[https://huggingface.co/sshleifer/distilbart-cnn-12-6]
+* [bert-base-uncased-emotion](https://huggingface.co/nateraw/bert-base-uncased-emotion)
+* [distilbart-cnn-12-6](https://huggingface.co/sshleifer/distilbart-cnn-12-6)
 
 
 ---
@@ -71,6 +71,8 @@ success. hash link c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437
 ## Use image in Golem application
 
 Image hash: `c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437`
+
+1. Start classifier in background: `/bin/sh -c "nohup python classifier.py run &"`
 
 1. Send input file to `/work/<input_file>`
 
