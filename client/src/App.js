@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+/* global chrome */
+
 import { useCallback, useEffect, useState } from 'react';
 import { StyledForm, StyledResult } from './styles';
 
@@ -31,21 +34,17 @@ const App = () => {
       .catch((error) => console.log(error));
   };
 
-  const handleCopy = useCallback((e) => {
-    const selection = document.getSelection();
-
-    setText(selection.toString());
-
-    e.preventDefault();
-  }, []);
+  const handleMessage = useCallback((message) => setText(message), []);
 
   useEffect(() => {
-    document.addEventListener('copy', handleCopy);
+    // eslint-disable-next-line
+    chrome.runtime && chrome.runtime.onMessage.addListener(handleMessage);
 
     return () => {
-      document.removeEventListener('copy', handleCopy);
+      // eslint-disable-next-line
+      chrome.runtime && chrome.runtime.onMessage.removeListener(handleMessage);
     };
-  }, [handleCopy]);
+  }, [handleMessage]);
 
   return result ? (
     <StyledResult>
