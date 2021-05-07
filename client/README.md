@@ -48,3 +48,5 @@ yarn build:extension
 ```
 
 Then, add `client/build` folder to your Chrome extensions.
+
+See [this page](https://webkul.com/blog/how-to-install-the-unpacked-extension-in-chrome/) for quick tutorial
