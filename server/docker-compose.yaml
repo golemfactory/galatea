@@ -30,7 +30,7 @@ services:
         environment:
             - PYTHONUNBUFFERED=1
             - YAGNA_URL=http://yagna:6000/
-            - YAPAPI_SUBNET_TAG=devnet-beta.1
+            - YAPAPI_SUBNET_TAG=galatea
             - YAPAPI_DRIVER=zksync
             - YAPAPI_NETWORK=rinkeby
         ports:

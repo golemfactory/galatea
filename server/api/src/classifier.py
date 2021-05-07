@@ -25,9 +25,10 @@ async def service_start(yagna_app):
     assert yagna_app and yagna_app["appkey"], "Classificator cannot be started, Yagna's APP_KEY is missing."
     os.environ["YAGNA_APPKEY"] = yagna_app["appkey"]
 
+    timeout = timedelta(minutes=115)
     package = await vm.repo(
-        image_hash=os.getenv("PROVIDER_IMAGE_HASH"),
-        min_mem_gib=-1.5,
+        image_hash=os.getenv("PROVIDER_IMAGE_HASH", "c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437"),
+        min_mem_gib=1.5,
         min_storage_gib=3.0,
     )
 
@@ -35,37 +36,34 @@ async def service_start(yagna_app):
         """
         Initializes classifiers and yields texts as tasks
         """
-        PYTHON = "/usr/local/bin/python"
         QUEUE_GET_TIMEOUT_SECONDS = 30
-
-        # Wait on queue until timeout to make provider busy
         text_queue = yagna_app["tasks"]
 
         ctx.run("/bin/sh", "-c", "nohup python classifier.py run &")
-
         yield ctx.commit()
-        print("Main process started")
+        print("Activity initialized.")
 
         try:
             async for task in tasks:
                 test_filename = f"sample_{task.data:08}.txt"
 
-                text, fut = asyncio.wait_for(text_queue.get(), QUEUE_GET_TIMEOUT_SECONDS)
+                text, fut = await asyncio.wait_for(text_queue.get(), QUEUE_GET_TIMEOUT_SECONDS)
+                assert text, "Empty input not expected"
+                print(f"Received text from queue: {text[:24]}...")
 
-                input_file_path = f"/tmp/{test_filename}.in"
+                input_file_path = f"/tmp/yagna-service-poc/{test_filename}.in"
                 async with aiofiles.open(input_file_path, mode="w") as f:
                     await f.write(text)
 
                 print("Sending input sample for classification " + input_file_path)
                 ctx.send_file(input_file_path, f"/work/{test_filename}.in")
                 ctx.run(
-                    {PYTHON}, "classifier.py", "submit", f"/work/{test_filename}.in", f"/work/{test_filename}.out"
+                    "/usr/local/bin/python", "classifier.py", "submit", f"/work/{test_filename}.in", f"/work/{test_filename}.out"
                 )
-                yield ctx.commit()
 
-                output_file_path = f"/tmp/{test_filename}.out"
+                output_file_path = f"/tmp/yagna-service-poc/{test_filename}.out"
                 ctx.download_file(f"/work/{test_filename}.out", output_file_path)
-                yield ctx.commit()
+                yield ctx.commit(timeout=timeout)
 
                 print("Received response to sample " + output_file_path)
                 async with aiofiles.open(output_file_path, mode="r") as f:
@@ -74,7 +72,7 @@ async def service_start(yagna_app):
                 text_queue.task_done()
                 task.accept_result()
 
-        except asyncio.CancelledError:
+        except (KeyboardInterrupt, asyncio.CancelledError):
             # let's ignore errors and pretend nothing has happened
             pass
         except asyncio.TimeoutError:
@@ -90,10 +88,10 @@ async def service_start(yagna_app):
             package=package,
             max_workers=1,
             budget=10.0,
-            timeout=timedelta(minutes=29),
+            timeout=timeout,
             subnet_tag=os.getenv("YAPAPI_SUBNET_TAG"),
-            driver=os.getenv("YAPAPI_DRIVER"),
-            network=os.getenv("YAPAPI_NETWORK"),
+            driver=os.getenv("YAPAPI_DRIVER", "zksync"),
+            network=os.getenv("YAPAPI_NETWORK", "rinkeby"),
             event_consumer=log_summary(log_event_repr),
     ) as executor:
 
@@ -133,23 +131,19 @@ async def main():
 
     asyncio.ensure_future(service_start(yagna_app))
 
+    print("Requestor task started")
     await future
     print(future.result())
     print("DONE.")
 
 if __name__ == "__main__":
-    os.environ["YAGNA_API_URL"] = "http://localhost:6000"
-    os.environ["YAGNA_APPKEY"] = "fa49af0fc2bb43a8a75d3e4f57434232"
-    os.environ["PROVIDER_IMAGE_HASH"] = "31996d45393a5c3c2651fad1e3da205411063e45cc204d31baccbb0f"
-    os.environ["YAPAPI_SUBNET_TAG"] = "devnet-beta.1"
-    os.environ["YAPAPI_DRIVER"] = "zksync"
-    os.environ["YAPAPI_NETWORK"] = "rinkeby"
+    os.environ["YAPAPI_SUBNET_TAG"] = "galatea"
 
     enable_default_logger(
         log_file="service-yapapi.log",
         debug_activity_api=True,
-        debug_market_api=True,
-        debug_payment_api=True,
+        debug_market_api=False,
+        debug_payment_api=False,
     )
 
     asyncio.run(main())
