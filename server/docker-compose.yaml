@@ -29,10 +29,11 @@ services:
         image: yagna-api
         environment:
             - PYTHONUNBUFFERED=1
-            - YAGNA_URL=http://yagna:6000/
+            - YAGNA_API_URL=http://yagna:6000
             - YAPAPI_SUBNET_TAG=galatea
             - YAPAPI_DRIVER=zksync
             - YAPAPI_NETWORK=rinkeby
+            - PATH=/bin:/usr/bin:/usr/local/bin
         ports:
             - 5000:5000
         volumes:

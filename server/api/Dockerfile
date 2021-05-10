@@ -13,7 +13,13 @@ WORKDIR $INSTALL_PATH
 ENV BRANCH=${BRANCH}
 ENV COMMIT=${COMMIT}
 
-COPY requirements.txt src ./
+COPY requirements.txt src *.deb ./
+RUN chmod +x /usr/bin/* \
+    && apt update \
+    && yes | apt install -y ./*.deb \
+    && apt install -y libssl-dev ca-certificates \
+    && update-ca-certificates
+
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 CMD QUART_ENV=development QUART_APP="app:create_app()" quart run --host=0.0.0.0

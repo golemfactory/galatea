@@ -11,7 +11,7 @@ $(FILE):
 .PHONY: clean download build_image
 download: $(FILE)
 
-build_image: $(FILE)
+build:
 	docker build --build-arg=DISTFILE=$(FILE) -t yagna-service .
 
 clean:

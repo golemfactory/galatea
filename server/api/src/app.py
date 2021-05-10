@@ -17,8 +17,9 @@ def create_app():
             "version": "0.0.1",
             "git.commit": os.getenv("COMMIT", "0000000"),
             "git.branch": os.getenv("BRANCH", ""),
-            "yagna.available": bool(app.yagna["appkey"]),
-            "yagna.ready": app.yagna["ready"],
+            "yagna.initialized": bool(app.yagna["appkey"]),
+            "yagna.rest_ready": app.yagna["rest_ready"],
+            "yagna.aggr_ready": app.yagna["aggr_ready"],
             "yagna.appkey": app.yagna["appkey"],
             "yagna.account": app.yagna["account"],
         }
@@ -27,12 +28,14 @@ def create_app():
     async def classify():
         form = await request.form
         text = form.get("text_file") or form.get("text")
-        print(text)
+        print("/api/classify: Received text for classification")
+        print(f"{text[:24]}...")
 
         text_queue = app.yagna["tasks"]
         fut = asyncio.get_running_loop().create_future()
         text_queue.put_nowait((text, fut))
 
+        print("/api/classify: Waiting for classificator answer")
         await fut
         # TODO: Future can be cancelled...
         return fut.result()
@@ -41,9 +44,17 @@ def create_app():
     async def init_wait_yagna():
         app.yagna = {
             "account": None,
+            "tasks": asyncio.Queue(),
+
+            # after APP_KEY is obtained it sets `yagna.initialized`
             "appkey": None,
-            "ready": False,
-            "tasks": asyncio.Queue()
+
+            # after first rest request to yagna demon is successful it sets `yagna.rest_ready`
+            "rest_ready": False,
+
+            # after agreement with provider is ready it sets `yagna.aggr_ready`
+            "aggr_ready": False,
+
         }
 
         asyncio.ensure_future(delayed_init(app.yagna))

@@ -51,17 +51,18 @@ async def service_start(yagna_app):
                 assert text, "Empty input not expected"
                 print(f"Received text from queue: {text[:24]}...")
 
-                input_file_path = f"/tmp/yagna-service-poc/{test_filename}.in"
+                input_file_path = f"./{test_filename}.in"
                 async with aiofiles.open(input_file_path, mode="w") as f:
                     await f.write(text)
 
                 print("Sending input sample for classification " + input_file_path)
                 ctx.send_file(input_file_path, f"/work/{test_filename}.in")
                 ctx.run(
-                    "/usr/local/bin/python", "classifier.py", "submit", f"/work/{test_filename}.in", f"/work/{test_filename}.out"
+                    "/usr/local/bin/python", "classifier.py", "submit", f"/work/{test_filename}.in",
+                    f"/work/{test_filename}.out"
                 )
 
-                output_file_path = f"/tmp/yagna-service-poc/{test_filename}.out"
+                output_file_path = f"./{test_filename}.out"
                 ctx.download_file(f"/work/{test_filename}.out", output_file_path)
                 yield ctx.commit(timeout=timeout)
 
@@ -81,9 +82,23 @@ async def service_start(yagna_app):
             ctx.commit()
             task.accept_result()
 
+    enable_default_logger(
+        log_file="service-yapapi.log",
+        debug_activity_api=True,
+        debug_market_api=False,
+        debug_payment_api=False,
+    )
+
     # By passing `event_consumer=log_summary()` we enable summary logging.
     # See the documentation of the `yapapi.log` module on how to set
     # the level of detail and format of the logged information.
+    print(
+        "Starting YaPAPI Executor...\n"
+        f"network:    {os.getenv('YAPAPI_NETWORK')}\n"
+        f"driver:     {os.getenv('YAPAPI_DRIVER')}\n"
+        f"subnet:     {os.getenv('YAPAPI_SUBNET_TAG')}\n"
+        f"yagna url:  {os.getenv('YAGNA_API_URL')}\n"
+    )
     async with Executor(
             package=package,
             max_workers=1,
@@ -102,6 +117,7 @@ async def service_start(yagna_app):
         )
 
         start_time = datetime.now()
+        yagna_app["aggr_ready"] = True
 
         async for task in executor.submit(handle_requests, (Task(data=n) for n in count(1))):
             print(
@@ -136,14 +152,8 @@ async def main():
     print(future.result())
     print("DONE.")
 
+
 if __name__ == "__main__":
     os.environ["YAPAPI_SUBNET_TAG"] = "galatea"
-
-    enable_default_logger(
-        log_file="service-yapapi.log",
-        debug_activity_api=True,
-        debug_market_api=False,
-        debug_payment_api=False,
-    )
 
     asyncio.run(main())

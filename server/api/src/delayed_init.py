@@ -36,19 +36,24 @@ async def is_yagna_ready(yagna_app):
     # Before we switch to YaPAPI let's first check if Yagna service responds tp REST requests
     async with aiohttp.ClientSession() as session:
 
-        payment_url = os.environ["YAGNA_URL"] + "payment-api/v1/requestorAccounts"
+        payment_url = os.environ["YAGNA_API_URL"] + "/payment-api/v1/requestorAccounts"
         yagna_appkey = yagna_app["appkey"]
         auth_header = {"Authorization": f"Bearer {yagna_appkey}"}
 
         while True:
-            async with session.get(payment_url, headers=auth_header) as response:
-                response = await response.json()
-                print(f"Trying to get requestors {response=}")
-                if response: break
-                await asyncio.sleep(3)
+            try:
+                async with session.get(payment_url, headers=auth_header) as response:
+                    response = await response.json()
+                    print(f"Trying to get requestors {response=}")
+                    if response: break
+                    await asyncio.sleep(3)
+            except Exception as ex:
+                print("Yagna ready exception " + str(ex))
+                await asyncio.sleep(5)
+                print("Retrying...")
 
     requestor, *_ = response
-    yagna_app["ready"] = requestor['address'] == yagna_app["account"]
+    yagna_app["rest_ready"] = requestor['address'] == yagna_app["account"]
 
 
 async def delayed_init(yagna_app):
