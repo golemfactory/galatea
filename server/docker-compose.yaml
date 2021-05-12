@@ -38,5 +38,6 @@ services:
             - 5000:5000
         volumes:
             - ./yagna_data:/app/yagna
+        mem_limit: 5g
         depends_on:
             - yagna
