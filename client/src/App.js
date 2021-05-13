@@ -1,11 +1,9 @@
-// eslint-disable-next-line no-unused-vars
-/* global chrome */
-
 import { useCallback, useEffect, useState } from 'react';
 import { StyledForm, StyledResult } from './styles';
 
 const App = () => {
   const url = 'http://0.0.0.0:5000';
+  const chrome = window.chrome;
 
   const [text, setText] = useState('');
 
@@ -37,14 +35,14 @@ const App = () => {
   const handleMessage = useCallback((message) => setText(message), []);
 
   useEffect(() => {
-    // eslint-disable-next-line
-    chrome.runtime && chrome.runtime.onMessage.addListener(handleMessage);
+    if (chrome && chrome.runtime) {
+      chrome.runtime.onMessage.addListener(handleMessage);
 
-    return () => {
-      // eslint-disable-next-line
-      chrome.runtime && chrome.runtime.onMessage.removeListener(handleMessage);
-    };
-  }, [handleMessage]);
+      return () => {
+        chrome.runtime.onMessage.removeListener(handleMessage);
+      };
+    }
+  }, [chrome, handleMessage]);
 
   return result ? (
     <StyledResult>
