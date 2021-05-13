@@ -4,8 +4,6 @@ The requestor's agent controlling and interacting with the classifier vm
 import asyncio
 from datetime import datetime, timedelta
 import aiofiles
-import random
-import string
 import os
 from itertools import count
 
@@ -25,7 +23,7 @@ async def service_start(yagna_app):
     assert yagna_app and yagna_app["appkey"], "Classificator cannot be started, Yagna's APP_KEY is missing."
     os.environ["YAGNA_APPKEY"] = yagna_app["appkey"]
 
-    timeout = timedelta(minutes=115)
+    timeout = timedelta(minutes=30)
     package = await vm.repo(
         image_hash=os.getenv("PROVIDER_IMAGE_HASH", "c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437"),
         min_mem_gib=1.5,
@@ -36,18 +34,18 @@ async def service_start(yagna_app):
         """
         Initializes classifiers and yields texts as tasks
         """
-        QUEUE_GET_TIMEOUT_SECONDS = 30
         text_queue = yagna_app["tasks"]
 
-        ctx.run("/bin/sh", "-c", "nohup python classifier.py run &")
-        yield ctx.commit()
-        print("Activity initialized.")
+        task = await tasks.__anext__()
 
         try:
-            async for task in tasks:
-                test_filename = f"sample_{task.data:08}.txt"
+            ctx.run("/bin/sh", "-c", "nohup python classifier.py run &")
+            print("Activity initialized.")
 
-                text, fut = await asyncio.wait_for(text_queue.get(), QUEUE_GET_TIMEOUT_SECONDS)
+            for i in count(1):
+                test_filename = f"sample_{i:08}.txt"
+
+                text, fut = await text_queue.get()
                 assert text, "Empty input not expected"
                 print(f"Received text from queue: {text[:24]}...")
 
@@ -70,15 +68,7 @@ async def service_start(yagna_app):
                 async with aiofiles.open(output_file_path, mode="r") as f:
                     fut.set_result(await f.read())
 
-                text_queue.task_done()
-                task.accept_result()
-
-        except (KeyboardInterrupt, asyncio.CancelledError):
-            # let's ignore errors and pretend nothing has happened
-            pass
-        except asyncio.TimeoutError:
-            # let provider know that we need its resources
-            print(f"No input received in iteration {task.data}")
+        except (KeyboardInterrupt, asyncio.CancelledError, asyncio.TimeoutError):
             ctx.commit()
             task.accept_result()
 
@@ -119,7 +109,7 @@ async def service_start(yagna_app):
         start_time = datetime.now()
         yagna_app["aggr_ready"] = True
 
-        async for task in executor.submit(handle_requests, (Task(data=n) for n in count(1))):
+        async for task in executor.submit(handle_requests, (Task(data=None),)):
             print(
                 f"Script executed: {task}, result: {task.result}, time: {task.running_time}"
             )

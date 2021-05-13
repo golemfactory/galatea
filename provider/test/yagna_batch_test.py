@@ -46,7 +46,7 @@ async def run(subnet_tag, driver=None, network=None):
 
 
 @click.command()
-@click.option("--subnet-tag", default="devnet-beta.1")
+@click.option("--subnet-tag", default="galatea")
 @click.option("--driver")
 @click.option("--network")
 def main(subnet_tag, driver=None, network=None):
@@ -72,6 +72,7 @@ def main(subnet_tag, driver=None, network=None):
             print("Done.")
         except (asyncio.CancelledError, KeyboardInterrupt):
             pass
+
 
 if __name__ == "__main__":
     main()
