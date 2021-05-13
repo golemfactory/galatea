@@ -41,8 +41,9 @@ const App = () => {
   return result ? (
     <StyledResult>
       <div>
-        <span>Response is:</span>
+        <span>Abstract</span>
         {result && result[0].summary_text}
+        <span>Emotions</span>
         {result &&
           result[1].summary_list.map(({ label, score }) => (
             <div>
@@ -52,7 +53,7 @@ const App = () => {
           ))}
       </div>
       <button type="button" onClick={handleReset}>
-        Reset
+        Close
       </button>
     </StyledResult>
   ) : (

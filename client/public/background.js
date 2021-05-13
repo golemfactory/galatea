@@ -3,8 +3,8 @@
 
 chrome.runtime.onInstalled.addListener(() =>
   chrome.contextMenus.create({
-    title: 'Yagna text classify',
-    id: 'yagna-service-poc',
+    title: 'Galatea, analyze!',
+    id: 'galatea',
     contexts: ['all'],
   }),
 );
@@ -12,7 +12,7 @@ chrome.runtime.onInstalled.addListener(() =>
 let windowId;
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (tab && info.menuItemId === 'yagna-service-poc') {
+  if (tab && info.menuItemId === 'galatea') {
     if (!info.selectionText) alert('Select some text');
     else {
       if (windowId) chrome.windows.remove(windowId);
