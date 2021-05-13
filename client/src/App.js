@@ -32,17 +32,11 @@ const App = () => {
       .catch((error) => console.log(error));
   };
 
-  const handleMessage = useCallback((message) => setText(message), []);
+  const handleStorage = useCallback(({ text }) => setText(text), []);
 
   useEffect(() => {
-    if (chrome && chrome.runtime) {
-      chrome.runtime.onMessage.addListener(handleMessage);
-
-      return () => {
-        chrome.runtime.onMessage.removeListener(handleMessage);
-      };
-    }
-  }, [chrome, handleMessage]);
+    chrome && chrome.storage && chrome.storage.local.get(['text'], handleStorage);
+  }, [chrome, handleStorage]);
 
   return result ? (
     <StyledResult>

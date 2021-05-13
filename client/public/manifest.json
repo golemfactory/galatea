@@ -10,12 +10,11 @@
     }
   ],
   "browser_action": {
-    "default_popup": "/popup.html",
     "default_title": "Yagna text classifier"
   },
   "background": {
     "scripts": ["/background.js"],
     "persistent": false
   },
-  "permissions": ["activeTab", "contextMenus", "http://0.0.0.0:5000/*"]
+  "permissions": ["activeTab", "contextMenus", "storage", "http://0.0.0.0:5000/*"]
 }
