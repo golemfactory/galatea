@@ -15,12 +15,7 @@ However, to build an extension `yarn` is required.
 ## DIY
 
 1. Make sure that backend is on
-
-- in `client` dir create `.env.local` file and put there your local environment variable
-
-```
-REACT_APP_API=http://0.0.0.0:5000
-```
+   
 
 2. Install dependencies (if you haven't earlier or new packages were added)
 

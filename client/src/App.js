@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { StyledForm, StyledResult } from './styles';
 
 const App = () => {
-  const url = process.env.REACT_APP_API;
+  const url = 'http://0.0.0.0:5000';
 
   const [text, setText] = useState('');
 
