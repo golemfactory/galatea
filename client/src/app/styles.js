@@ -1,18 +1,12 @@
 import styled from 'styled-components';
 
-export const StyledForm = styled.form`
+export const StyledText = styled.div`
   width: 560px;
   height: 280px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-
-  textarea {
-    width: 50%;
-    height: 200px;
-    margin: 10px 0;
-  }
 `;
 
 export const StyledResult = styled.div`
