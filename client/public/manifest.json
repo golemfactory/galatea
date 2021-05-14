@@ -1,0 +1,21 @@
+{
+  "name": "Yagna service PoC",
+  "version": "1.0.0",
+  "manifest_version": 2,
+  "description": "Yagna Service for text classification.",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["/main.js"]
+    }
+  ],
+  "browser_action": {
+    "default_popup": "/popup.html",
+    "default_title": "Yagna text classifier"
+  },
+  "background": {
+    "scripts": ["/background.js"],
+    "persistent": false
+  },
+  "permissions": ["activeTab", "contextMenus", "http://0.0.0.0:5000/*"]
+}
