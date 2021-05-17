@@ -48,9 +48,9 @@ const App = () => {
     <StyledResult>
       <div>
         <span>Response is:</span>
-        {result && result[0].summary_text}
+        {result && result.summary.summary_text}
         {result &&
-          result[1].summary_list.map(({ label, score }) => (
+          result.emotion.map(({ label, score }) => (
             <div>
               <span>{label}:</span>
               <span>{score}</span>
