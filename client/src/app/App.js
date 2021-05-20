@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { StyledText, StyledResult } from './styles';
+import { Button, Error, Layout, Loader, Placeholder, Result, Text } from '../components';
+import GlobalStyle from '../styles/global';
 
 const App = () => {
   const url = 'http://0.0.0.0:5000';
@@ -14,11 +15,6 @@ const App = () => {
   const handleCancel = () => {
     chrome && chrome.storage && chrome.storage.local.set({ text: '' });
     window.close();
-  };
-
-  const handleClose = () => {
-    setResult(undefined);
-    handleCancel();
   };
 
   const handleRestart = (text) => {
@@ -46,54 +42,44 @@ const App = () => {
     chrome && chrome.storage && chrome.storage.local.get(['text'], handleStorage);
   }, [chrome, handleStorage]);
 
-  return error ? (
-    <div>
-      <h2>Some error occured...</h2>
-      <p>and we are unable to analyze your text at this moment</p>
-      <div>
-        <button type="button" onClick={() => handleRestart(text)}>
-          Try again
-        </button>
-        <button type="button" onClick={handleCancel}>
-          Cancel
-        </button>
-      </div>
-    </div>
-  ) : text ? (
-    result ? (
-      <StyledResult>
-        <div>
-          <span>Abstract</span>
-          {result && result[0].summary_text}
-          <span>Emotions</span>
-          {result &&
-            result[1].summary_list.map(({ label, score }) => (
-              <div>
-                <span>{label}:</span>
-                <span>{score}</span>
-              </div>
-            ))}
-        </div>
-        <button type="button" onClick={handleClose}>
-          Close
-        </button>
-      </StyledResult>
-    ) : (
-      <StyledText>
-        {text}
-        <button type="button" onClick={handleCancel}>
-          Cancel
-        </button>
-      </StyledText>
-    )
-  ) : (
-    <div>
-      <h2>Please select some text...</h2>
-      <p>So we can analyze it</p>
-      <button type="button" onClick={handleClose}>
-        Close
-      </button>
-    </div>
+  return (
+    <>
+      <GlobalStyle />
+      <Layout>
+        {error ? (
+          <>
+            <Error>
+              <Text>{text}</Text>
+            </Error>
+            <div>
+              <Button label="Try again" onClick={() => handleRestart(text)} short />
+              <Button label="Cancel" onClick={handleCancel} outlined short />
+            </div>
+          </>
+        ) : text ? (
+          result ? (
+            <>
+              <Result result={result}>
+                <Text>{text}</Text>
+              </Result>
+              <Button label="Close" onClick={handleCancel} />
+            </>
+          ) : (
+            <>
+              <Loader>
+                <Text>{text}</Text>
+              </Loader>
+              <Button label="Cancel" onClick={handleCancel} outlined />
+            </>
+          )
+        ) : (
+          <>
+            <Placeholder />
+            <Button label="Close" onClick={handleCancel} />
+          </>
+        )}
+      </Layout>
+    </>
   );
 };
 

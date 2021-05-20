@@ -19,9 +19,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       {
         url: 'popup.html',
         type: 'popup',
-        width: 560,
-        height: 280,
-        left: screen.width - 560,
+        width: 357,
+        height: 800,
+        left: screen.width - 357,
         top: 0,
       },
       (window) => {

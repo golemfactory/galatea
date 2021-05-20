@@ -1,0 +1,20 @@
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Galatea_Result" transform="translate(-162.000000, -621.000000)" fill-rule="nonzero">
+            <g id="Group-4-Copy-4" transform="translate(132.000000, 582.000000)">
+                <g id="Group-2" transform="translate(20.000000, 29.000000)">
+                    <g id="flushed" transform="translate(10.000000, 10.000000)">
+                        <circle id="Oval" fill="#EBEEF5" cx="17" cy="17" r="17"></circle>
+                        <circle id="Oval" fill="#FFFFFF" cx="23.7291667" cy="12.75" r="4.95833333"></circle>
+                        <circle id="Oval" fill="#404B63" cx="23.7291667" cy="12.75" r="2.125"></circle>
+                        <circle id="Oval" fill="#FFFFFF" cx="10.2708333" cy="12.75" r="4.95833333"></circle>
+                        <g id="Group" transform="translate(8.145833, 10.625000)" fill="#404B63">
+                            <circle id="Oval" cx="2.125" cy="2.125" r="2.125"></circle>
+                            <path d="M13.4583333,14.875 L4.25,14.875 C3.6635,14.875 3.1875,14.399 3.1875,13.8125 C3.1875,13.226 3.6635,12.75 4.25,12.75 L13.4583333,12.75 C14.0448333,12.75 14.5208333,13.226 14.5208333,13.8125 C14.5208333,14.399 14.0448333,14.875 13.4583333,14.875 Z" id="Path"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

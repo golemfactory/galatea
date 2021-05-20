@@ -1,0 +1,10 @@
+export { default as Button } from './Button';
+export { default as Error } from './Error';
+export { default as Footer } from './Footer';
+export { default as Header } from './Header';
+export { default as Heading } from './Heading';
+export { default as Layout } from './Layout';
+export { default as Loader } from './Loader';
+export { default as Placeholder } from './Placeholder';
+export { default as Result } from './Result';
+export { default as Text } from './Text';

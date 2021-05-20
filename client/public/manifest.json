@@ -12,9 +12,14 @@
   "browser_action": {
     "default_title": "Galatea"
   },
+  "icons": {
+    "16": "16.png",
+    "32": "32.png",
+    "48": "48.png"
+  },
   "background": {
     "scripts": ["/background.js"],
     "persistent": false
   },
-  "permissions": ["activeTab", "contextMenus", "storage", "http://0.0.0.0:5000/*"]
+  "permissions": ["activeTab", "contextMenus", "storage", "http://0.0.0.0:5000/*", "https://fonts.googleapis.com/"]
 }
