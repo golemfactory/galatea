@@ -27,7 +27,7 @@ async def run(subnet_tag, driver=None, network=None):
     package = await vm.repo(
         image_hash="c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437",
         min_mem_gib=1.5,
-        min_storage_gib=4.0,
+        min_storage_gib=2.0,
     )
 
     async with Executor(

@@ -3,6 +3,7 @@ FROM debian:bullseye-slim
 ARG DISTFILE=""
 LABEL dist_file=${DISTFILE}
 
+# TODO: Download yagna inside container
 COPY *.deb init.sh ./
 
 RUN chmod +x /usr/bin/* \

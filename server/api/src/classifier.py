@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import aiofiles
 import os
 from itertools import count
+import uuid
 
 from yapapi import (
     Executor,
@@ -17,60 +18,63 @@ from yapapi import (
 from yapapi.log import enable_default_logger, log_summary, log_event_repr  # noqa
 from yapapi.package import vm
 
+from yagna import Yagna
 
-async def service_start(yagna_app):
+
+async def handle_requests(ctx: WorkContext, yagna_app: Yagna, tasks):
+    """
+    Initializes classifiers and yields texts as tasks
+    """
+    text_queue = yagna_app.tasks
+
+    task = await tasks.__anext__()
+
+    try:
+        ctx.run("/bin/sh", "-c", "nohup python classifier.py run &")
+        print("Activity initialized.")
+
+        while True:
+            test_filename = f"sample_{uuid.uuid4().hex}.txt"
+
+            text, fut = await text_queue.get()
+            assert text, "Empty input not expected"
+            print(f"Received text from queue: {text[:24]}...")
+
+            input_file_path = f"./{test_filename}.in"
+            async with aiofiles.open(input_file_path, mode="w") as f:
+                await f.write(text)
+
+            print("Sending input sample for classification " + input_file_path)
+            ctx.send_file(input_file_path, f"/work/{test_filename}.in")
+            ctx.run(
+                "/usr/local/bin/python", "classifier.py", "submit",
+                f"/work/{test_filename}.in",
+                f"/work/{test_filename}.out"
+            )
+
+            output_file_path = f"./{test_filename}.out"
+            ctx.download_file(f"/work/{test_filename}.out", output_file_path)
+            yield ctx.commit(timeout=timedelta(minutes=25))
+
+            print("Received response to sample " + output_file_path)
+            async with aiofiles.open(output_file_path, mode="r") as f:
+                fut.set_result(await f.read())
+
+    except (KeyboardInterrupt, asyncio.CancelledError, asyncio.TimeoutError):
+        ctx.commit()
+        task.accept_result()
+
+
+async def service_start(yagna_app: Yagna) -> None:
     # Set the Yagna's APP_KEY
-    assert yagna_app and yagna_app["appkey"], "Classificator cannot be started, Yagna's APP_KEY is missing."
-    os.environ["YAGNA_APPKEY"] = yagna_app["appkey"]
+    assert yagna_app.initialized, "Classificator cannot be started, Yagna's APP_KEY is missing."
+    os.environ["YAGNA_APPKEY"] = yagna_app.app_key
 
-    timeout = timedelta(minutes=30)
     package = await vm.repo(
         image_hash=os.getenv("PROVIDER_IMAGE_HASH", "c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437"),
         min_mem_gib=1.5,
-        min_storage_gib=3.0,
+        min_storage_gib=2.0,
     )
-
-    async def handle_requests(ctx: WorkContext, tasks):
-        """
-        Initializes classifiers and yields texts as tasks
-        """
-        text_queue = yagna_app["tasks"]
-
-        task = await tasks.__anext__()
-
-        try:
-            ctx.run("/bin/sh", "-c", "nohup python classifier.py run &")
-            print("Activity initialized.")
-
-            for i in count(1):
-                test_filename = f"sample_{i:08}.txt"
-
-                text, fut = await text_queue.get()
-                assert text, "Empty input not expected"
-                print(f"Received text from queue: {text[:24]}...")
-
-                input_file_path = f"./{test_filename}.in"
-                async with aiofiles.open(input_file_path, mode="w") as f:
-                    await f.write(text)
-
-                print("Sending input sample for classification " + input_file_path)
-                ctx.send_file(input_file_path, f"/work/{test_filename}.in")
-                ctx.run(
-                    "/usr/local/bin/python", "classifier.py", "submit", f"/work/{test_filename}.in",
-                    f"/work/{test_filename}.out"
-                )
-
-                output_file_path = f"./{test_filename}.out"
-                ctx.download_file(f"/work/{test_filename}.out", output_file_path)
-                yield ctx.commit(timeout=timeout)
-
-                print("Received response to sample " + output_file_path)
-                async with aiofiles.open(output_file_path, mode="r") as f:
-                    fut.set_result(await f.read())
-
-        except (KeyboardInterrupt, asyncio.CancelledError, asyncio.TimeoutError):
-            ctx.commit()
-            task.accept_result()
 
     enable_default_logger(
         log_file="service-yapapi.log",
@@ -93,13 +97,12 @@ async def service_start(yagna_app):
             package=package,
             max_workers=1,
             budget=10.0,
-            timeout=timeout,
+            timeout=timedelta(minutes=30),
             subnet_tag=os.getenv("YAPAPI_SUBNET_TAG"),
             driver=os.getenv("YAPAPI_DRIVER", "zksync"),
             network=os.getenv("YAPAPI_NETWORK", "rinkeby"),
             event_consumer=log_summary(log_event_repr),
     ) as executor:
-
         print(
             f"yapapi version: {yapapi_version}\n"
             f"payment driver: {executor.driver}, "
@@ -107,7 +110,7 @@ async def service_start(yagna_app):
         )
 
         start_time = datetime.now()
-        yagna_app["aggr_ready"] = True
+        yagna_app.agreement_ready = True
 
         async for task in executor.submit(handle_requests, (Task(data=None),)):
             print(
@@ -120,10 +123,8 @@ async def service_start(yagna_app):
 
 
 async def main():
-    yagna_app = {
-        "tasks": asyncio.Queue(),
-        "appkey": os.getenv("YAGNA_APPKEY")
-    }
+    yagna_app = Yagna()
+    yagna_app.app_key = os.getenv("YAGNA_APPKEY")
     text = """
     The Queen has conducted her first in-person royal duty since her husband, the Duke of Edinburgh, died on Friday.
     The monarch hosted a ceremony in which the Earl Peel formally stood down as Lord Chamberlain, whose office organises royal ceremonies.
@@ -132,9 +133,7 @@ async def main():
     A royal official said members of the family would continue "to undertake engagements appropriate to the circumstances".
         """
 
-    future = asyncio.get_running_loop().create_future()
-    yagna_app["tasks"].put_nowait((text, future))
-
+    future = asyncio.ensure_future(yagna_app.classify(text))
     asyncio.ensure_future(service_start(yagna_app))
 
     print("Requestor task started")
