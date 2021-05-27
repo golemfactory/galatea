@@ -2,11 +2,9 @@
 The requestor's agent controlling and interacting with the classifier vm
 """
 import asyncio
-import functools
 from datetime import datetime, timedelta
 import aiofiles
 import os
-from itertools import count
 import uuid
 
 from yapapi import (
@@ -22,12 +20,12 @@ from yapapi.package import vm
 from yagna import Yagna
 
 
-async def handle_requests(yagna_app: Yagna, ctx: WorkContext, tasks):
+async def handle_requests(ctx: WorkContext, tasks):
     """
     Initializes classifiers and yields texts as tasks
     """
-    text_queue = yagna_app.tasks
     task = await tasks.__anext__()
+    text_queue = task.data.tasks
 
     try:
         ctx.run("/bin/sh", "-c", "nohup python classifier.py run &")
@@ -112,8 +110,7 @@ async def service_start(yagna_app: Yagna) -> None:
         start_time = datetime.now()
         yagna_app.agreement_ready = True
 
-        handler = functools.partial(handle_requests, yagna_app)
-        async for task in executor.submit(handler, (Task(data=None),)):
+        async for task in executor.submit(handle_requests, (Task(data=yagna_app),)):
             print(
                 f"Script executed: {task}, result: {task.result}, time: {task.running_time}"
             )
