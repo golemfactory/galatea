@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
-import App from './App';
+import App from './app/App';
 
-const root = document.getElementById('yagna-service-poc-root');
+const root = document.getElementById('galatea-root');
 
 root && ReactDOM.render(<App />, root);

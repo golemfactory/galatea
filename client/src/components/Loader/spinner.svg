@@ -1,0 +1,54 @@
+<svg width="45px" height="45px" viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+  <g transform="translate(-156.000000, -328.000000)" fill="#181EA9">
+    <g transform="translate(178.009174, 350.505297) rotate(30.000000) translate(-178.009174, -350.505297) translate(162.292526, 334.546005)">
+      <g transform="translate(0.000000, 12.155608)" id="Oval">
+        <circle cx="4.5" cy="4.5" r="4.5">
+          <animateTransform attributeName="transform" type="scale" begin="-1.6666666666666667s" values="1 1;1 1" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+          <animate attributeName="fill-opacity" keyTimes="0;1" dur="2s" repeatCount="indefinite" values="1;0" begin="-1.6666666666666667s"></animate>
+        </circle>
+      </g>
+      <g transform="translate(3.795800, 19.722432)" fill-opacity="0.833333333" id="Oval">
+        <g transform="translate(6.000000, 6.000000) rotate(60.000000) translate(-6.000000, -6.000000) translate(1.607695, 1.607695)">
+          <circle cx="4.39230485" cy="4.39230485" r="4.39230485">
+            <animateTransform attributeName="transform" type="scale" begin="-1.3333333333333333s" values="1 1;1 1" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+            <animate attributeName="fill-opacity" keyTimes="0;1" dur="2s" repeatCount="indefinite" values="1;0" begin="-1.3333333333333333s"></animate>
+          </circle>
+        </g>
+      </g>
+      <g transform="translate(15.456054, 19.918584)" fill-opacity="0.666666667" id="Oval">
+        <g transform="translate(6.000000, 6.000000) rotate(120.000000) translate(-6.000000, -6.000000) translate(1.607695, 1.607695)">
+          <circle cx="4.39230485" cy="4.39230485" r="4.39230485">
+            <animateTransform attributeName="transform" type="scale" begin="-1s" values="1 1;1 1" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+            <animate attributeName="fill-opacity" keyTimes="0;1" dur="2s" repeatCount="indefinite" values="1;0" begin="-1s"></animate>
+          </circle>
+        </g>
+      </g>
+      <g transform="translate(22.433296, 11.905445)" fill-opacity="0.5" id="Oval">
+        <g transform="translate(4.500000, 4.500000) rotate(180.000000) translate(-4.500000, -4.500000) ">
+          <circle cx="4.5" cy="4.5" r="4.5">
+            <animateTransform attributeName="transform" type="scale" begin="-0.6666666666666666s" values="1 1;1 1" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+            <animate attributeName="fill-opacity" keyTimes="0;1" dur="2s" repeatCount="indefinite" values="1;0" begin="-0.6666666666666666s"></animate>
+          </circle>
+        </g>
+      </g>
+      <g transform="translate(15.616308, 0.196152)" fill-opacity="0.333333333" id="Oval">
+        <g transform="translate(6.000000, 6.000000) rotate(-120.000000) translate(-6.000000, -6.000000) translate(1.607695, 1.607695)">
+          <circle cx="4.39230485" cy="4.39230485" r="4.39230485">
+            <animateTransform attributeName="transform" type="scale" begin="-0.3333333333333333s" values="1 1;1 1" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+            <animate attributeName="fill-opacity" keyTimes="0;1" dur="2s" repeatCount="indefinite" values="1;0" begin="-0.3333333333333333s"></animate>
+          </circle>
+        </g>
+      </g>
+      <g transform="translate(3.956054, -0.000000)" fill-opacity="0.166666667" id="Oval">
+        <g transform="translate(6.000000, 6.000000) rotate(-60.000000) translate(-6.000000, -6.000000) translate(1.607695, 1.607695)">
+          <circle cx="4.39230485" cy="4.39230485" r="4.39230485">
+            <animateTransform attributeName="transform" type="scale" begin="0s" values="1 1;1 1" keyTimes="0;1" dur="2s" repeatCount="indefinite"></animateTransform>
+            <animate attributeName="fill-opacity" keyTimes="0;1" dur="2s" repeatCount="indefinite" values="1;0" begin="0s"></animate>
+          </circle>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+</svg>
