@@ -29,7 +29,7 @@ const App = () => {
       body: new URLSearchParams(`text=${text}`),
     })
       .then((response) => response.json())
-      .then(({ results }) => setTimeout(() => setResult(results), 2000))
+      .then((result) => setResult(result))
       .catch(() => setError(true));
 
   const handleStorage = useCallback(({ text }) => {

@@ -9,12 +9,12 @@ const Result = ({ children, result }) => (
     {children}
     <StyledAbstract>
       <Heading>Abstract</Heading>
-      <p>{result[0].summary_text}</p>
+      <p>{result.summary.summary_text}</p>
     </StyledAbstract>
     <StyledEmotions>
       <Heading>Emotions</Heading>
       <div>
-        {result[1].summary_list.map(({ label, score }) => (
+        {result.emotion.map(({ label, score }) => (
           <>
             <StyledEmotion>
               <span>{label}</span>
