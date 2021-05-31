@@ -14,9 +14,10 @@ const Result = ({ children, result }) => (
     <StyledEmotions>
       <Heading>Emotions</Heading>
       <div>
-        {result.emotion.map(({ label, score }) => (
-          <>
-            <StyledEmotion>
+        {result.emotion
+          .sort((prev, next) => (prev.score > next.score ? -1 : 1))
+          .map(({ label, score }) => (
+            <StyledEmotion key={label}>
               <span>{label}</span>
               <StyledChart>
                 <PieChart
@@ -34,8 +35,7 @@ const Result = ({ children, result }) => (
               </StyledChart>
               <span>{Math.floor(score * 100)}</span>
             </StyledEmotion>
-          </>
-        ))}
+          ))}
       </div>
     </StyledEmotions>
   </StyledResult>
