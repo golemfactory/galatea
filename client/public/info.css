@@ -1,0 +1,24 @@
+html {
+  font-size: 10px;
+}
+
+body {
+  width: 26rem;
+  height: 6rem;
+
+  color: #404b63;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 500;
+  font-size: 0.8rem;
+  line-height: 1.1rem;
+
+  margin: 0;
+  padding: 0.5rem 2rem;
+}
+
+h2 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1.4rem;
+}
