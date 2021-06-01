@@ -21,6 +21,7 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 500;
     font-size: 0.8rem;
     line-height: 1.1rem;
+    overflow: hidden;
   }
   
   #galatea-root {
