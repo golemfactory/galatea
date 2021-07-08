@@ -1,7 +1,7 @@
 # Makefile is your friend!
 all: build
 
-.PHONY: clean
+.PHONY: build clean
 
 build:
 	docker build -t yagna-service .
