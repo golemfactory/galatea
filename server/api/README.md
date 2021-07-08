@@ -23,7 +23,7 @@ docker-compose up -d yagna
 ### Run classifier from api service
 ```bash
 docker-compose run \
-  -e YAGNA_APPKEY=$(cat yagna_data/app_key| jq '.values[0][1]') \
+  -e YAGNA_APPKEY="$(jq -r '.values[0][1]' yagna_data/app_key)" \
   -e YAPAPI_SUBNET_TAG=devnet-beta.2 \
   -e DENY_LIST="" \
   api python classifier.py
