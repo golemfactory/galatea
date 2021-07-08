@@ -16,8 +16,25 @@ from yapapi import (
 
 from yapapi.log import enable_default_logger, log_summary, log_event_repr  # noqa
 from yapapi.package import vm
+from yapapi.executor.strategy import DummyMS, SCORE_REJECTED
 
 from yagna import Yagna
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import List, Set
+
+
+CLASSIFIER_WORK_DIR = "/work"
+PROVIDER_IMAGE_HASH = "6098588119b9483b099af3ffc1e9247cd6d14e6a4d34eec36cd8119a"
+
+class DenylistMS(DummyMS):
+    def __init__(self, providers: List[str]) -> None:
+        self._providers: Set[str] = set(providers)
+
+    async def score_offer(self, offer, *args, **kwargs) -> float:
+        if offer.issuer in self._providers:
+            return SCORE_REJECTED
+        return await super().score_offer(offer, *args, **kwargs)
 
 
 async def handle_requests(ctx: WorkContext, tasks):
@@ -28,7 +45,10 @@ async def handle_requests(ctx: WorkContext, tasks):
     text_queue = task.data.tasks
 
     try:
+        copy_models(ctx)
         ctx.run("/bin/sh", "-c", "nohup python classifier.py run &")
+        yield ctx.commit(timeout=timedelta(minutes=50))
+        print("Models transfer completed")
         print("Activity initialized.")
 
         while True:
@@ -63,13 +83,24 @@ async def handle_requests(ctx: WorkContext, tasks):
         task.accept_result()
 
 
+def copy_models(ctx):
+    print("Models transfer started")
+    ctx.send_file("./models.json", f"{CLASSIFIER_WORK_DIR}/models.json")
+
+    for path, _subdir, files in os.walk("models"):
+        for file in files:
+            print(f"Transfer file: {path}/{file}")
+            ctx.send_file(f"{path}/{file}", f"{CLASSIFIER_WORK_DIR}/{path}/{file}")
+
+
+
 async def service_start(yagna_app: Yagna) -> None:
     # Set the Yagna's APP_KEY
     assert yagna_app.initialized, "Classificator cannot be started, Yagna's APP_KEY is missing."
     os.environ["YAGNA_APPKEY"] = yagna_app.app_key
 
     package = await vm.repo(
-        image_hash=os.getenv("PROVIDER_IMAGE_HASH", "c6b743459d3428fb860582e556ceba1c76dbc8a1d599a55dcf73e437"),
+        image_hash=os.getenv("PROVIDER_IMAGE_HASH", PROVIDER_IMAGE_HASH),
         min_mem_gib=1.5,
         min_storage_gib=2.0,
     )
@@ -95,11 +126,12 @@ async def service_start(yagna_app: Yagna) -> None:
             package=package,
             max_workers=1,
             budget=10.0,
-            timeout=timedelta(minutes=30),
+            timeout=timedelta(minutes=99),
             subnet_tag=os.getenv("YAPAPI_SUBNET_TAG"),
             driver=os.getenv("YAPAPI_DRIVER", "zksync"),
             network=os.getenv("YAPAPI_NETWORK", "rinkeby"),
             event_consumer=log_summary(log_event_repr),
+            strategy=DenylistMS(os.getenv("DENY_LIST", "").split())
     ) as executor:
         print(
             f"yapapi version: {yapapi_version}\n"
@@ -141,6 +173,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    os.environ["YAPAPI_SUBNET_TAG"] = "galatea"
-
     asyncio.run(main())

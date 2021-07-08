@@ -4,7 +4,8 @@ ARG DISTFILE=""
 LABEL dist_file=${DISTFILE}
 
 # TODO: Download yagna inside container
-COPY *.deb init.sh ./
+ADD https://github.com/golemfactory/yagna/releases/download/v0.7.1/golem-requestor_v0.7.1_amd64.deb ./
+COPY init.sh ./
 
 RUN chmod +x /usr/bin/* \
     && apt update \
