@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 import aiofiles
 import os
 import uuid
-from typing import List, Optional, Set, Tuple
 
 from yapapi import (
     Executor,
@@ -17,9 +16,13 @@ from yapapi import (
 
 from yapapi.log import enable_default_logger, log_summary, log_event_repr  # noqa
 from yapapi.package import vm
-from yapapi.executor.strategy import (DummyMS, SCORE_REJECTED)
+from yapapi.executor.strategy import DummyMS, SCORE_REJECTED
 
 from yagna import Yagna
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import List, Set
+
 
 CLASSIFIER_WORK_DIR = "/work"
 PROVIDER_IMAGE_HASH = "6098588119b9483b099af3ffc1e9247cd6d14e6a4d34eec36cd8119a"

@@ -4,6 +4,7 @@ aiofiles==0.6.0
 aiohttp==3.7
 yapapi==0.6.1
 
+# these imports are needed by download_models.py
 click==7.1.2
 -f https://download.pytorch.org/whl/torch_stable.html
 torch==1.8.1+cpu
