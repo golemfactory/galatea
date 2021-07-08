@@ -123,7 +123,7 @@ async def service_start(yagna_app: Yagna) -> None:
             package=package,
             max_workers=1,
             budget=10.0,
-            timeout=timedelta(minutes=30),
+            timeout=timedelta(minutes=99),
             subnet_tag=os.getenv("YAPAPI_SUBNET_TAG"),
             driver=os.getenv("YAPAPI_DRIVER", "zksync"),
             network=os.getenv("YAPAPI_NETWORK", "rinkeby"),
